@@ -2,6 +2,7 @@
 #define IMGUTILS_H_
 
 #include <vector>
+
 #include "canvas.h"
 
 namespace {

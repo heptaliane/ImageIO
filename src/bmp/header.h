@@ -23,6 +23,13 @@ class BmpFileHeader {
 public:
 
 
+    // constant
+    static const unsigned int length;
+    static const unsigned char type[2];
+    static const unsigned char reserved1[2];
+    static const unsigned char reserved2[2];
+
+
     // default constructor
     BmpFileHeader () :
         size(0), offset(0) {};
@@ -58,13 +65,6 @@ public:
     unsigned int size;
     unsigned int offset;
 
-
-    // constance
-    static const unsigned int length;
-    static const unsigned char type[2];
-    static const unsigned char reserved1[2];
-    static const unsigned char reserved2[2];
-
 };
 
 
@@ -82,6 +82,11 @@ public:
 
 class BmpCoreHeader {
 public:
+
+
+    // constant
+    static const unsigned int length;
+    static const unsigned char planes[2];
 
 
     // default constructor
@@ -122,11 +127,6 @@ public:
     short height;
     unsigned short bitCount;
 
-
-    // constance
-    static const unsigned int length;
-    static const unsigned char planes[2];
-
 };
 
 
@@ -144,6 +144,11 @@ public:
 
 class BmpInfoHeader {
 public:
+
+
+    // constant
+    static const unsigned int length;
+    static const unsigned char planes[2];
 
 
     // default constructor
@@ -204,13 +209,7 @@ public:
     unsigned int clrUsed;
     unsigned int cirImportant;
 
-
-    // constance
-    static const unsigned int length;
-    static const unsigned char planes[2];
-
 };
-
 
 }
 

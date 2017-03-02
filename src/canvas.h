@@ -76,28 +76,28 @@ public:
 
 
     // get value from matrix
-    const SimpleColor &get(unsigned int row, unsigned int col) const;
+    const SimpleColor &get (unsigned int row, unsigned int col) const;
 
 
     // set value to matrix
-    void set(unsigned int row, unsigned int col,
+    void set (unsigned int row, unsigned int col,
             const SimpleColor &color);
 
 
     // resize the matrix
-    void resize(unsigned int newWidth, unsigned int newHeight);
+    void resize (unsigned int newWidth, unsigned int newHeight);
 
 
     // copy matrix
-    void copy(const Canvas &obj);
+    void copy (const Canvas &obj);
 
 
     // get matrix size
-    unsigned int rows() const {
+    unsigned int rows () const {
         return height;
     };
 
-    unsigned int cols() const {
+    unsigned int cols () const {
         return width;
     };
 
@@ -106,8 +106,12 @@ public:
 private:
 
 
+    // constant
+    static const SimpleColor except;
+
+
     // check if the coordinate is out of range or not
-    bool isIndexInRange(unsigned int row, unsigned int col) const {
+    bool isIndexInRange (unsigned int row, unsigned int col) const {
         return ( row < height && col < width );
     };
 
@@ -116,10 +120,6 @@ private:
     unsigned int width;
     unsigned int height;
     SimpleColor *mat;
-
-
-    // constant
-    static const SimpleColor except;
 
 };
 

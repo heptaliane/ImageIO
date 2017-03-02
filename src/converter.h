@@ -20,7 +20,8 @@ namespace conv {
     //
     // unsigned int -> unsigned char std::vector
     //
-    void convert(unsigned int origin, std::vector<unsigned char> *container) {
+    void convert (
+            unsigned int origin, std::vector<unsigned char> *container) {
 
         // delete container content
         container->clear();
@@ -35,7 +36,7 @@ namespace conv {
     //
     // unsigned short -> unsigned char std::vector
     //
-    void convert(
+    void convert (
             unsigned short origin, std::vector<unsigned char> *container) {
 
         // delete container content
@@ -51,7 +52,7 @@ namespace conv {
     //
     // int -> unsigned char std::vector
     //
-    void convert(int origin, std::vector<unsigned char> *container) {
+    void convert (int origin, std::vector<unsigned char> *container) {
 
         // delete container content
         container->clear();
@@ -66,7 +67,7 @@ namespace conv {
     //
     // short -> unsigned char std::vector
     //
-    void convert(short origin, std::vector<unsigned char> *container) {
+    void convert (short origin, std::vector<unsigned char> *container) {
 
         // delete container content
         container->clear();
@@ -81,7 +82,7 @@ namespace conv {
     //
     // unsigned char -> bool std::vector
     //
-    void convert(unsigned char origin, std::vector<bool> *container) {
+    void convert (unsigned char origin, std::vector<bool> *container) {
 
         // delete container content
         container->clear();
@@ -106,7 +107,7 @@ namespace conv {
     //
     // unsigned char std::vector -> unsigned int
     //
-    unsigned int dumpUInt(
+    unsigned int dumpUInt (
             const std::vector<unsigned char> &origin, int begin = 0) {
 
         // store binary units to the variable
@@ -122,7 +123,7 @@ namespace conv {
     //
     // unsigned char std::vector -> int
     //
-    int dumpInt(const std::vector<unsigned char> &origin, int begin = 0) {
+    int dumpInt (const std::vector<unsigned char> &origin, int begin = 0) {
 
         // store binary units to the variable
         int value = origin[begin] |
@@ -137,7 +138,7 @@ namespace conv {
     //
     // unsigned short std::vector -> unsigned int
     //
-    unsigned short dumpUShort(
+    unsigned short dumpUShort (
             const std::vector<unsigned char> &origin, int begin = 0) {
 
         // store binary units to the variable
@@ -151,7 +152,7 @@ namespace conv {
     //
     // short std::vector -> unsigned int
     //
-    short dumpShort(
+    short dumpShort (
             const std::vector<unsigned char> &origin, int begin = 0) {
 
         // store binary units to the variable
@@ -164,7 +165,7 @@ namespace conv {
     //
     // bool std::vector -> unsigned char
     //
-    unsigned char dumpUChar(const std::vector<bool> &origin, int begin = 0) {
+    unsigned char dumpUChar (const std::vector<bool> &origin, int begin = 0) {
 
         // store binary units to the variable
         unsigned char value = 0;

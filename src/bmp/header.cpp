@@ -12,7 +12,7 @@ namespace imgio {
 //
 
 
-// constance
+// constant
 const unsigned int BmpFileHeader::length = 14;
 
 const unsigned char BmpFileHeader::type[2] = {
@@ -83,7 +83,7 @@ std::string BmpFileHeader::toString () const {
 
 
 
-// constance
+// constant
 const unsigned int BmpCoreHeader::length = 12;
 const unsigned char planes[2] = {
     static_cast<unsigned char>(1), static_cast<unsigned char>(0)
@@ -145,7 +145,7 @@ std::string BmpCoreHeader::toString () const {
 //
 
 
-// constance
+// constant
 const unsigned int BmpInfoHeader::length = 40;
 const unsigned char BmpInfoHeader::planes[2] = {
     static_cast<unsigned char>(1), static_cast<unsigned char>(0)
