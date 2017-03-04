@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include "../canvas.h"
+#include "../imgutils.h"
 #include "header.h"
 
 
@@ -124,9 +125,41 @@ private:
             const std::vector<unsigned char> &binary, int begin);
 
 
-    // 1, 4, 8 bit image loader
-    void loadImageWithPalette(
+    // 1 bit image loader
+    void loadImage1bit (
             const std::vector<unsigned char> &binary, int begin);
+
+
+    // 4 bit image loader
+    void loadImage4bit (
+            const std::vector<unsigned char> &binary, int begin);
+
+
+    // 8 bit image loader
+    void loadImage8bit (
+            const std::vector<unsigned char> &binary, int begin);
+
+
+    // translate image
+    void dumpImage (
+            std::vector<unsigned char> *container) const;
+
+
+    // 1 bit image translator
+    void dumpImage1bit (std::vector<unsigned char> *container) const;
+
+    // 4 bit image translator
+    void dumpImage4bit (std::vector<unsigned char> *container) const;
+
+    // 8 bit image translator
+    void dumpImage8bit (std::vector<unsigned char> *container) const;
+
+    // 24 bit image translator
+    void dumpImage24bit (std::vector<unsigned char> *container) const;
+
+    // 32 bit image translator
+    void dumpImage32bit (std::vector<unsigned char> *container) const;
+
 
     // contained data
     Canvas image;

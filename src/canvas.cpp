@@ -30,7 +30,7 @@ Canvas::Canvas (unsigned int imgWidth, unsigned int imgHeight,
 
 
 // destructor
-Canvas::~Canvas() {
+Canvas::~Canvas () {
 
     delete mat;
     mat = NULL;
@@ -39,7 +39,7 @@ Canvas::~Canvas() {
 
 
 // get value from matrix
-const SimpleColor &Canvas::get(unsigned int row, unsigned int col) const {
+const SimpleColor &Canvas::get (unsigned int row, unsigned int col) const {
 
     if (isIndexInRange(row, col)) {
         return mat[row * height + col];
@@ -51,7 +51,7 @@ const SimpleColor &Canvas::get(unsigned int row, unsigned int col) const {
 
 
 // set value to matrix
-void Canvas::set(unsigned int row, unsigned int col,
+void Canvas::set (unsigned int row, unsigned int col,
         const SimpleColor &color) {
 
     if (isIndexInRange(row, col)) {
@@ -62,7 +62,7 @@ void Canvas::set(unsigned int row, unsigned int col,
 
 
 // resize matrix
-void Canvas::resize(unsigned int newWidth, unsigned int newHeight) {
+void Canvas::resize (unsigned int newWidth, unsigned int newHeight) {
 
     // load size
     width = newWidth;
@@ -74,7 +74,7 @@ void Canvas::resize(unsigned int newWidth, unsigned int newHeight) {
 
 }
 
-void Canvas::copy(const Canvas &obj) {
+void Canvas::copy (const Canvas &obj) {
 
     // adjust to original size
     resize(obj.cols(), obj.rows());

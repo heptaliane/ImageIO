@@ -96,6 +96,78 @@ namespace imgio {
     void BmpDealer::getBinary (
             std::vector<unsigned char> *container, int type) const {
 
+        // delete container content
+        container->clear();
+
+        // get image binary
+        std::vector<unsigned char> imgBinary;
+        dumpImage(&imgBinary);
+
+        // get infomation header
+        std::vector<unsigned char> info;
+
+        // encode OS / 2 bitmap
+        if (type == OS_2_BITMAP) {
+            BmpCoreHeader cheader(image.cols(), image.rows(), bitCount);
+            cheader.toBinary(&info);
+
+            // container
+            SimpleColor color;
+            const int paletteLength = 1 << bitCount;
+
+            // dump pelette
+            for ( int i = 0; i < paletteLength; i++ ) {
+                if (i < palette.size()) {
+                    color = palette[i];
+
+                // case of index is not found in palette
+                } else {
+                    color = SimpleColor();
+                }
+
+                info.push_back(color.blue);
+                info.push_back(color.green);
+                info.push_back(color.red);
+            }
+
+        // encode windows bitmap
+        } else {
+            BmpInfoHeader iheader(image.cols(), image.rows(), bitCount);
+            iheader.toBinary(&info);
+
+            // container
+            SimpleColor color;
+
+            // dump pelette
+            for ( int i = 0; i < iheader.clrUsed; i++ ) {
+                if (i < palette.size()) {
+                    color = palette[i];
+
+                // case of index is not found in palette
+                } else {
+                    color = SimpleColor();
+                }
+
+                info.push_back(color.blue);
+                info.push_back(color.green);
+                info.push_back(color.red);
+                info.push_back(static_cast<unsigned char>(0));
+            }
+        }
+
+        // set file header
+        BmpFileHeader fheader(
+                BmpFileHeader::length + info.size() + imgBinary.size(),
+                BmpFileHeader::length + info.size());
+        fheader.toBinary(container);
+
+        // concat infomation header
+        container->insert(container->end(), info.begin(), info.end());
+
+        // concat image data
+        container->insert(
+                container->end(), imgBinary.begin(), imgBinary.end());
+
     };
 
 
@@ -187,13 +259,134 @@ namespace imgio {
     void BmpDealer::loadImage (
             const std::vector<unsigned char> &binary, int begin) {
 
-        // full color bitmap
-        if (bitCount == 24 || bitCount == 32) {
-            loadImageFullColor(binary, begin);
+        // 1 bit bitmap
+        if (bitCount == 1) {
+            loadImage1bit(binary, begin);
 
-        // bitmap with palette
-        } else {
-            loadImageWithPalette(binary, begin);
+        // 4 bit bitmap
+        } else if (bitCount == 4) {
+            loadImage4bit(binary, begin);
+
+        // 8 bit bitmap
+        } else if (bitCount == 8) {
+            loadImage8bit(binary, begin);
+
+        // 24, 32 bit bitmap
+        } else if (bitCount == 24 || bitCount == 32) {
+            loadImageFullColor(binary, begin);
+        }
+
+    };
+
+
+    // 1 bit image loader
+    void BmpDealer::loadImage1bit (
+            const std::vector<unsigned char> &binary, int begin) {
+
+        // get palette size
+        const int color_size = palette.size();
+
+        // palette index container
+        int pidx;
+        int idx = begin;
+
+        // container
+        std::vector<unsigned char> buffer;
+        buffer.reserve(8);
+
+        for ( int i = image.rows() - 1; i >= 0; i-- ) {
+            for ( int j = 0; j * 8 < image.cols(); j++ ) {
+
+                // get palette index list
+                convertColor1bit(binary[idx], &buffer);
+
+                for ( int k = 0; k < 8; k++ ) {
+                    // get palette index
+                    pidx = static_cast<int>(buffer[k]);
+
+                    // case of invalid index detected
+                    if (pidx >= color_size) {
+                        pidx = 0;
+                    }
+
+                    image.set(i, j * 8 + k, palette[pidx]);
+                }
+
+                // update index
+                idx++;
+            }
+        }
+
+    };
+
+
+    // 4 bit image loader
+    void BmpDealer::loadImage4bit (
+            const std::vector<unsigned char> &binary, int begin) {
+
+        // get palette size
+        const int color_size = palette.size();
+
+        // palette index container
+        int pidx;
+        int idx = begin;
+
+        // container
+        std::vector<unsigned char> buffer;
+        buffer.reserve(2);
+
+        for ( int i = image.rows() - 1; i >= 0; i-- ) {
+            for ( int j = 0; j * 2 < image.cols(); j++ ) {
+
+                // get palette index list
+                convertColor1bit(binary[idx], &buffer);
+
+                for ( int k = 0; k < 2; k++ ) {
+                    // get palette index
+                    pidx = static_cast<int>(buffer[k]);
+
+                    // case of invalid index detected
+                    if (pidx >= color_size) {
+                        pidx = 0;
+                    }
+
+                    image.set(i, j * 2 + k, palette[pidx]);
+                }
+
+                // update index
+                idx++;
+            }
+        }
+
+    };
+
+
+    // 8 bit image loader
+    void BmpDealer::loadImage8bit (
+            const std::vector<unsigned char> &binary, int begin) {
+
+        // get palette size
+        const int color_size = palette.size();
+
+        // palette index container
+        int pidx;
+        int idx = begin;
+
+        for ( int i = image.rows() - 1; i >= 0; i-- ) {
+            for ( int j = 0; j < image.cols(); j++ ) {
+                // get palette index
+                pidx = static_cast<int>(binary[idx]);
+
+                // case of invalid index detected
+                if (pidx >= color_size) {
+                    pidx = 0;
+                }
+
+                image.set(i, j, palette[pidx]);
+
+                // update index
+                idx++;
+            }
         }
 
     };
@@ -225,36 +418,186 @@ namespace imgio {
     };
 
 
-    // 1, 4, 8 bit image loader
-    void BmpDealer::loadImageWithPalette(
-            const std::vector<unsigned char> &binary, int begin) {
+    // translate image
+    void BmpDealer::dumpImage (
+            std::vector<unsigned char> *container) const {
 
-        // get palette size
-        const int color_size = palette.size();
+        // 1 bit bitmap
+        if (bitCount == 1) {
+            dumpImage1bit(container);
 
-        // palette index container
-        int pidx;
-        int idx = begin;
+        // 4 bit bitmap
+        } else if (bitCount == 4) {
+            dumpImage4bit(container);
 
+        // 8 bit bitmap
+        } else if (bitCount == 8) {
+            dumpImage8bit(container);
+
+        // 24 bit bitmap
+        } else if (bitCount == 24) {
+            dumpImage24bit(container);
+
+        // 32 bit bitmap
+        } else if (bitCount == 32) {
+            dumpImage32bit(container);
+        }
+
+    };
+
+
+    // 1 bit image translator
+    void BmpDealer::dumpImage1bit (
+            std::vector<unsigned char> *container) const {
+
+        // delete container content
+        container->clear();
+
+        // how many bytes 1 column has
+        int width_bytes = image.cols() / 8 + 1;
+        std::vector<unsigned char> buffer;
+        buffer.reserve(8);
+
+        // set binary
         for ( int i = image.rows() - 1; i >= 0; i-- ) {
-            for ( int j = 0; j < image.cols(); j++ ) {
-                // get palette index
-                pidx = static_cast<int>(binary[idx]);
+            for ( int j = 0; j < width_bytes; j++ ) {
 
-                // case of invalid index detected
-                if (pidx >= color_size) {
-                    pidx = 0;
+                // initialize buffer
+                buffer.clear();
+
+                for ( int k = 0; k < 8; k++ ) {
+
+                    // exist pixel
+                    if (j * 8 + k < image.cols()) {
+                        buffer.push_back(
+                                allotPalette(image.get(i, j * 8 + k),
+                                    palette));
+
+                    // padding
+                    } else {
+                        buffer.push_back(static_cast<unsigned char>(0));
+
+                    }
+
                 }
 
-                image.set(i, j, palette[pidx]);
-
-                // update index
-                idx++;
+                // collect data and store
+                container->push_back(collectColor1bit(buffer));
             }
         }
 
     };
 
+
+    // 4 bit image translator
+    void BmpDealer::dumpImage4bit (
+            std::vector<unsigned char> *container) const {
+
+        // delete container content
+        container->clear();
+
+        // how many bytes 1 column has
+        int width_bytes = image.cols() / 2 + 1;
+        std::vector<unsigned char> buffer;
+        buffer.reserve(2);
+
+        // set binary
+        for ( int i = image.rows() - 1; i >= 0; i-- ) {
+            for ( int j = 0; j < width_bytes; j++ ) {
+
+                // initialize buffer
+                buffer.clear();
+
+                for ( int k = 0; k < 2; k++ ) {
+
+                    // exist pixel
+                    if (j * 2 + k < image.cols()) {
+                        buffer.push_back(
+                                allotPalette(image.get(i, j * 2 + k),
+                                    palette));
+
+                    // padding
+                    } else {
+                        buffer.push_back(static_cast<unsigned char>(0));
+
+                    }
+
+                }
+
+                // collect data and store
+                container->push_back(collectColor1bit(buffer));
+            }
+        }
+
+    };
+
+
+    // 8 bit image translator
+    void BmpDealer::dumpImage8bit (
+            std::vector<unsigned char> *container) const {
+
+        // delete container content
+        container->clear();
+
+        // set binary
+        for ( int i = image.rows() - 1; i >= 0; i-- ) {
+            for ( int j = 0; j < image.cols(); j++ ) {
+                container->push_back(
+                        allotPalette(image.get(i, j), palette));
+            }
+        }
+
+    };
+
+
+    // 24 bit image translator
+    void BmpDealer::dumpImage24bit (
+            std::vector<unsigned char> *container) const {
+
+        // delete container content
+        container->clear();
+
+        SimpleColor color;
+
+        // dump image
+        for ( int i = image.rows() - 1; i >= 0; i-- ) {
+            for ( int j = 0; j < image.cols(); j++ ) {
+                color = image.get(i, j);
+
+                container->push_back(color.blue);
+                container->push_back(color.green);
+                container->push_back(color.red);
+            }
+        }
+
+    };
+
+
+    // 32 bit image translator
+    void BmpDealer::dumpImage32bit (
+            std::vector<unsigned char> *container) const {
+
+        // delete container content
+        container->clear();
+
+        SimpleColor color;
+
+        // reserved value
+        unsigned char zero = static_cast<unsigned char>(0);
+
+        // dump image
+        for ( int i = image.rows() - 1; i >= 0; i-- ) {
+            for ( int j = 0; j < image.cols(); j++ ) {
+                color = image.get(i, j);
+
+                container->push_back(color.blue);
+                container->push_back(color.green);
+                container->push_back(color.red);
+                container->push_back(zero);
+            }
+        }
+
+    };
 
 
     // check if file type is BMP
