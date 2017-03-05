@@ -6,6 +6,7 @@
 
 #include "../canvas.h"
 #include "../imgutils.h"
+#include "../converter.h"
 #include "header.h"
 
 

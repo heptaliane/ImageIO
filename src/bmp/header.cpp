@@ -85,7 +85,7 @@ std::string BmpFileHeader::toString () const {
 
 // constant
 const unsigned int BmpCoreHeader::length = 12;
-const unsigned char planes[2] = {
+const unsigned char BmpCoreHeader::planes[2] = {
     static_cast<unsigned char>(1), static_cast<unsigned char>(0)
 };
 
