@@ -1,4 +1,5 @@
 #include "dealer.h"
+#include <iostream>
 
 
 
@@ -62,15 +63,22 @@ namespace imgio {
             return;
         }
 
+        // log
+        std::cout << "valid bitmap detected" << std::endl;
+
         // detect format type
         int formatType = detectFormatType(binary, begin);
 
         // OS / 2 bitmap
         if (formatType == OS_2_BITMAP) {
+            // log
+            std::cout << "OS / 2 bitmap format detected" << std::endl;
             loadCoreHeader(binary);
 
         // Windows bitmap
         } else if (formatType == WINDOWS_BITMAP) {
+            // log
+            std::cout << "Windows bitmap format detected" << std::endl;
             loadInfoHeader(binary);
 
         // unknown format
@@ -192,6 +200,8 @@ namespace imgio {
         loadPalette(binary, 1 << bitCount,
                 begin + BmpCoreHeader::length, OS_2_BITMAP);
 
+        // log
+        std::cout << cheader.toString() << std::endl;
     };
 
 
@@ -201,6 +211,9 @@ namespace imgio {
 
         // get infomation header
         BmpInfoHeader iheader(binary, begin);
+
+        // log
+        std::cout << iheader.toString() << std::endl;
 
         // set bit count
         bitCount = iheader.bitCount;

@@ -176,8 +176,8 @@ public:
         sizeImage(conv::dumpUInt(header, begin + 20)),
         xPixPerMeter(conv::dumpInt(header, begin + 24)),
         yPixPerMeter(conv::dumpInt(header, begin + 28)),
-        clrUsed(conv::dumpUInt(header, 32)),
-        cirImportant(conv::dumpUInt(header, 36)) {};
+        clrUsed(conv::dumpUInt(header, begin + 32)),
+        cirImportant(conv::dumpUInt(header, begin + 36)) {};
 
 
 
