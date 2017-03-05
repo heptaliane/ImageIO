@@ -102,6 +102,17 @@ namespace imgio {
     };
 
 
+    // get palette
+    void BmpDealer::getPalette (std::vector<SimpleColor> *container) const {
+
+        // prepare memory
+        container->resize(palette.size());
+
+        // copy data
+        copy(palette.begin(), palette.end(), container->begin());
+    };
+
+
     // get binary
     void BmpDealer::getBinary (
             std::vector<unsigned char> *container, int type) const {

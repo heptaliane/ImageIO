@@ -79,6 +79,10 @@ public:
     void getImage (Canvas *container) const;
 
 
+    // get palette
+    void getPalette (std::vector<SimpleColor> *container) const;
+
+
     // get binary
     void getBinary (
             std::vector<unsigned char> *container,
