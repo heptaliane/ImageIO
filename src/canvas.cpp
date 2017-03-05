@@ -42,7 +42,7 @@ Canvas::~Canvas () {
 const SimpleColor &Canvas::get (unsigned int row, unsigned int col) const {
 
     if (isIndexInRange(row, col)) {
-        return mat[row * height + col];
+        return mat[row * width + col];
     }
     // if index is out of range, return exceptional value
     return except;
@@ -55,7 +55,7 @@ void Canvas::set (unsigned int row, unsigned int col,
         const SimpleColor &color) {
 
     if (isIndexInRange(row, col)) {
-        mat[row * height + col] = color;
+        mat[row * width + col] = color;
     }
 
 }

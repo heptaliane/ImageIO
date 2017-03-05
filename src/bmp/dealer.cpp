@@ -86,10 +86,13 @@ namespace imgio {
             return;
         }
 
-        BmpFileHeader fHeader(binary);
+        BmpFileHeader fheader(binary);
+
+        //log
+        std::cout << fheader.toString() << std::endl;
 
         // load image
-        loadImage(binary, fHeader.offset);
+        loadImage(binary, fheader.offset);
     }
 
 
@@ -99,7 +102,6 @@ namespace imgio {
     };
 
 
-    // TODO
     // get binary
     void BmpDealer::getBinary (
             std::vector<unsigned char> *container, int type) const {
@@ -141,13 +143,18 @@ namespace imgio {
         // encode windows bitmap
         } else {
             BmpInfoHeader iheader(image.cols(), image.rows(), bitCount);
+            iheader.clrUsed = palette.size();
+            iheader.cirImportant = palette.size();
+            iheader.sizeImage = imgBinary.size();
+
             iheader.toBinary(&info);
 
             // container
             SimpleColor color;
+            const int paletteLength = 1 << bitCount;
 
             // dump pelette
-            for ( int i = 0; i < iheader.clrUsed; i++ ) {
+            for ( int i = 0; i < paletteLength; i++ ) {
                 if (i < palette.size()) {
                     color = palette[i];
 
@@ -161,6 +168,7 @@ namespace imgio {
                 info.push_back(color.red);
                 info.push_back(static_cast<unsigned char>(0));
             }
+            std::cout << iheader.toString() << std::endl;
         }
 
         // set file header
@@ -168,6 +176,7 @@ namespace imgio {
                 BmpFileHeader::length + info.size() + imgBinary.size(),
                 BmpFileHeader::length + info.size());
         fheader.toBinary(container);
+        std::cout << fheader.toString() << std::endl;
 
         // concat infomation header
         container->insert(container->end(), info.begin(), info.end());
