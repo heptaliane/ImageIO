@@ -132,24 +132,10 @@ namespace imgio {
             BmpCoreHeader cheader(image.cols(), image.rows(), bitCount);
             cheader.toBinary(&info);
 
-            // container
-            SimpleColor color;
-            const int paletteLength = 1 << bitCount;
-
-            // dump pelette
-            for ( int i = 0; i < paletteLength; i++ ) {
-                if (i < palette.size()) {
-                    color = palette[i];
-
-                // case of index is not found in palette
-                } else {
-                    color = SimpleColor();
-                }
-
-                info.push_back(color.blue);
-                info.push_back(color.green);
-                info.push_back(color.red);
-            }
+            // set palette
+            std::vector<unsigned char> pal;
+            dumpPalette(&pal, OS_2_BITMAP);
+            info.insert(info.end(), pal.begin(), pal.end());
 
         // encode windows bitmap
         } else {
@@ -160,26 +146,13 @@ namespace imgio {
 
             iheader.toBinary(&info);
 
-            // container
-            SimpleColor color;
-            const int paletteLength = 1 << bitCount;
+            // set palette
+            std::vector<unsigned char> pal;
+            dumpPalette(&pal, WINDOWS_BITMAP);
+            info.insert(info.end(), pal.begin(), pal.end());
 
-            // dump pelette
-            for ( int i = 0; i < paletteLength; i++ ) {
-                if (i < palette.size()) {
-                    color = palette[i];
-
-                // case of index is not found in palette
-                } else {
-                    color = SimpleColor();
-                }
-
-                info.push_back(color.blue);
-                info.push_back(color.green);
-                info.push_back(color.red);
-                info.push_back(static_cast<unsigned char>(0));
-            }
             std::cout << iheader.toString() << std::endl;
+
         }
 
         // set file header
@@ -245,7 +218,7 @@ namespace imgio {
         image.resize(iheader.width, iheader.height);
 
         // load palette
-        loadPalette(binary, iheader.clrUsed,
+        loadPalette(binary, 1 << bitCount,
                 begin + BmpInfoHeader::length, WINDOWS_BITMAP);
     };
 
@@ -405,6 +378,12 @@ namespace imgio {
         int pidx;
         int idx = begin;
 
+        // put padding so that it is an integral multiple of 4 bytes
+        int padding = 4 - image.cols() % 4;
+        if (padding == 4) {
+            padding = 0;
+        }
+
         for ( int i = image.rows() - 1; i >= 0; i-- ) {
             for ( int j = 0; j < image.cols(); j++ ) {
                 // get palette index
@@ -420,6 +399,7 @@ namespace imgio {
                 // update index
                 idx++;
             }
+            idx += padding;
         }
 
     };
@@ -572,11 +552,21 @@ namespace imgio {
         // delete container content
         container->clear();
 
+        // put padding so that it is an integral multiple of 4 bytes
+        int padding = 4 - image.cols() % 4;
+        if (padding == 4) {
+            padding = 0;
+        }
+
+
         // set binary
         for ( int i = image.rows() - 1; i >= 0; i-- ) {
             for ( int j = 0; j < image.cols(); j++ ) {
                 container->push_back(
                         allotPalette(image.get(i, j), palette));
+            }
+            for ( int k = 0; k < padding; k++ ) {
+                container->push_back(static_cast<unsigned char>(0));
             }
         }
 
@@ -630,6 +620,43 @@ namespace imgio {
             }
         }
 
+    };
+
+
+    // translate palette
+    void BmpDealer::dumpPalette (
+            std::vector<unsigned char> *container, int type) const {
+
+        // delete container content
+        container->clear();
+
+        // no palette is required for full color bitmap
+        if (bitCount >= 24) {
+            return;
+        }
+
+        // container
+        SimpleColor color;
+        const int paletteLength = 1 << bitCount;
+
+        // dump pelette
+        for ( int i = 0; i < paletteLength; i++ ) {
+            if (i < palette.size()) {
+                color = palette[i];
+
+            // case of index is not found in palette
+            } else {
+                color = SimpleColor();
+            }
+
+            container->push_back(color.blue);
+            container->push_back(color.green);
+            container->push_back(color.red);
+
+            if (type == WINDOWS_BITMAP) {
+                container->push_back(static_cast<unsigned char>(0));
+            }
+        }
     };
 
 

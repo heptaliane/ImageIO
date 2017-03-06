@@ -166,6 +166,12 @@ private:
     void dumpImage32bit (std::vector<unsigned char> *container) const;
 
 
+    // translate palette
+    void dumpPalette (
+            std::vector<unsigned char> *container,
+            int type = WINDOWS_BITMAP) const;
+
+
     // contained data
     Canvas image;
     std::vector<SimpleColor> palette;
