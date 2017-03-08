@@ -64,7 +64,7 @@ unsigned char collectColor1bit (const std::vector<unsigned char> &binary) {
     // store to the 1 byte variable
     unsigned char value = 0;
     for ( int i = 0; i < 8; i++ ) {
-        value += binary[i] << i;
+        value += binary[i] << (7 - i);
     }
 
     return value;
@@ -78,7 +78,7 @@ void convertColor1bit (
     // delete container content
     container->clear();
 
-    for ( int i = 0; i < 8; i++ ) {
+    for ( int i = 7; i >= 0; i-- ) {
         container->push_back((value >> i) % 2);
     }
 

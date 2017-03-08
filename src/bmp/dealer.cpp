@@ -308,6 +308,12 @@ namespace imgio {
         std::vector<unsigned char> buffer;
         buffer.reserve(8);
 
+        // padding
+        int padding = 4 - ((image.cols() + 7) / 8) % 4;
+        if (padding == 4) {
+            padding = 0;
+        }
+
         for ( int i = image.rows() - 1; i >= 0; i-- ) {
             for ( int j = 0; j * 8 < image.cols(); j++ ) {
 
@@ -329,6 +335,7 @@ namespace imgio {
                 // update index
                 idx++;
             }
+            idx += padding;
         }
 
     };
@@ -491,9 +498,15 @@ namespace imgio {
         container->clear();
 
         // how many bytes 1 column has
-        int width_bytes = image.cols() / 8 + 1;
+        int width_bytes = (image.cols() + 7) / 8;
         std::vector<unsigned char> buffer;
         buffer.reserve(8);
+
+        // padding
+        int padding = 4 - ((image.cols() + 7) / 8) % 4;
+        if (padding == 4) {
+            padding = 0;
+        }
 
         // set binary
         for ( int i = image.rows() - 1; i >= 0; i-- ) {
@@ -513,13 +526,17 @@ namespace imgio {
                     // padding
                     } else {
                         buffer.push_back(static_cast<unsigned char>(0));
-
                     }
 
                 }
 
                 // collect data and store
                 container->push_back(collectColor1bit(buffer));
+            }
+
+            // padding
+            for ( int l = 0; l < padding; l++ ) {
+                container->push_back(static_cast<unsigned char>(0));
             }
         }
 
