@@ -89,7 +89,7 @@ void convertColor1bit (
 unsigned char collectColor4bit (const std::vector<unsigned char> &binary) {
 
     // store to the 1 byte variable
-    unsigned char value = binary[0] + binary[1] << 4;
+    unsigned char value = binary[0] + (binary[1] << 4);
 
     return value;
 

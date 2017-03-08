@@ -34,19 +34,25 @@ namespace imgio {
     // set palette
     void BmpDealer::setPalette (const std::vector<SimpleColor> &newPalette) {
 
-        // prepare memory
-        palette.resize(newPalette.size());
+        // delete old palette
+        palette.clear();
 
-        // copy data
-        copy(newPalette.begin(), newPalette.end(), palette.begin());
-
+        // push new palette data
+        for ( int i = 0; i < (1 << bitCount); i++ ) {
+            palette.push_back(newPalette[i]);
+        }
     }
 
 
     // set bit count
     void BmpDealer::setBitCount (unsigned short newBitCount) {
+
         bitCount = newBitCount;
-    }
+
+        // change palette size
+        palette.resize(1 << bitCount);
+
+  }
 
 
     // set compression type
@@ -341,11 +347,17 @@ namespace imgio {
         std::vector<unsigned char> buffer;
         buffer.reserve(2);
 
+        // padding
+        int padding = 4 - ((image.cols() + 1) / 2) % 4;
+        if (padding == 4) {
+            padding = 0;
+        }
+
         for ( int i = image.rows() - 1; i >= 0; i-- ) {
             for ( int j = 0; j * 2 < image.cols(); j++ ) {
 
                 // get palette index list
-                convertColor1bit(binary[idx], &buffer);
+                convertColor4bit(binary[idx], &buffer);
 
                 for ( int k = 0; k < 2; k++ ) {
                     // get palette index
@@ -362,6 +374,8 @@ namespace imgio {
                 // update index
                 idx++;
             }
+
+            idx += padding;
         }
 
     };
@@ -510,9 +524,15 @@ namespace imgio {
         container->clear();
 
         // how many bytes 1 column has
-        int width_bytes = image.cols() / 2 + 1;
+        int width_bytes = (image.cols() + 1) / 2;
         std::vector<unsigned char> buffer;
         buffer.reserve(2);
+
+        // padding
+        int padding = 4 - ((image.cols() + 1) / 2) % 4;
+        if (padding == 4) {
+            padding = 0;
+        }
 
         // set binary
         for ( int i = image.rows() - 1; i >= 0; i-- ) {
@@ -532,13 +552,17 @@ namespace imgio {
                     // padding
                     } else {
                         buffer.push_back(static_cast<unsigned char>(0));
-
+                        continue;
                     }
 
                 }
 
-                // collect data and store
-                container->push_back(collectColor1bit(buffer));
+                container->push_back(collectColor4bit(buffer));
+            }
+
+            // padding
+            for ( int l = 0; l < padding; l++ ) {
+                container->push_back(static_cast<unsigned char>(0));
             }
         }
 
