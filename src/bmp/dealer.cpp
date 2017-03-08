@@ -50,7 +50,9 @@ namespace imgio {
         bitCount = newBitCount;
 
         // change palette size
-        palette.resize(1 << bitCount);
+        if (bitCount < 24) {
+            palette.resize(1 << bitCount);
+        }
 
   }
 
