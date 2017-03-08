@@ -20,6 +20,7 @@ namespace imgio {
     // initialized by raw binary
     BmpDealer::BmpDealer (
             const std::vector<unsigned char> &binary, int begin) {
+
         loadBinary(binary, begin);
     };
 
@@ -27,8 +28,9 @@ namespace imgio {
 
     // set image matrix
     void BmpDealer::setImage (const Canvas &newImage) {
+
         image.copy(newImage);
-    }
+    };
 
 
     // set palette
@@ -41,7 +43,7 @@ namespace imgio {
         for ( int i = 0; i < (1 << bitCount); i++ ) {
             palette.push_back(newPalette[i]);
         }
-    }
+    };
 
 
     // set bit count
@@ -53,14 +55,13 @@ namespace imgio {
         if (bitCount < 24) {
             palette.resize(1 << bitCount);
         }
-
-  }
+    };
 
 
     // set compression type
     void BmpDealer::setCompression (unsigned int newCompression) {
         compression = newCompression;
-    }
+    };
 
     // load raw binary
     void BmpDealer::loadBinary (
@@ -71,22 +72,15 @@ namespace imgio {
             return;
         }
 
-        // log
-        std::cout << "valid bitmap detected" << std::endl;
-
         // detect format type
         int formatType = detectFormatType(binary, begin);
 
         // OS / 2 bitmap
         if (formatType == OS_2_BITMAP) {
-            // log
-            std::cout << "OS / 2 bitmap format detected" << std::endl;
             loadCoreHeader(binary);
 
         // Windows bitmap
         } else if (formatType == WINDOWS_BITMAP) {
-            // log
-            std::cout << "Windows bitmap format detected" << std::endl;
             loadInfoHeader(binary);
 
         // unknown format
@@ -96,12 +90,9 @@ namespace imgio {
 
         BmpFileHeader fheader(binary);
 
-        //log
-        std::cout << fheader.toString() << std::endl;
-
         // load image
         loadImage(binary, fheader.offset);
-    }
+    };
 
 
     // get image matrix
@@ -151,16 +142,12 @@ namespace imgio {
             iheader.clrUsed = palette.size();
             iheader.cirImportant = palette.size();
             iheader.sizeImage = imgBinary.size();
-
             iheader.toBinary(&info);
 
             // set palette
             std::vector<unsigned char> pal;
             dumpPalette(&pal, WINDOWS_BITMAP);
             info.insert(info.end(), pal.begin(), pal.end());
-
-            std::cout << iheader.toString() << std::endl;
-
         }
 
         // set file header
@@ -168,7 +155,6 @@ namespace imgio {
                 BmpFileHeader::length + info.size() + imgBinary.size(),
                 BmpFileHeader::length + info.size());
         fheader.toBinary(container);
-        std::cout << fheader.toString() << std::endl;
 
         // concat infomation header
         container->insert(container->end(), info.begin(), info.end());
@@ -176,9 +162,12 @@ namespace imgio {
         // concat image data
         container->insert(
                 container->end(), imgBinary.begin(), imgBinary.end());
-
     };
 
+
+    //
+    // binary loaders
+    //
 
 
     // load OS / 2 header
@@ -200,9 +189,6 @@ namespace imgio {
         // load palette
         loadPalette(binary, 1 << bitCount,
                 begin + BmpCoreHeader::length, OS_2_BITMAP);
-
-        // log
-        std::cout << cheader.toString() << std::endl;
     };
 
 
@@ -212,9 +198,6 @@ namespace imgio {
 
         // get infomation header
         BmpInfoHeader iheader(binary, begin);
-
-        // log
-        std::cout << iheader.toString() << std::endl;
 
         // set bit count
         bitCount = iheader.bitCount;
@@ -265,7 +248,6 @@ namespace imgio {
             // update index
             idx += color_size;
         }
-
     };
 
 
@@ -289,7 +271,6 @@ namespace imgio {
         } else if (bitCount == 24 || bitCount == 32) {
             loadImageFullColor(binary, begin);
         }
-
     };
 
 
@@ -329,15 +310,16 @@ namespace imgio {
                         pidx = 0;
                     }
 
+                    // save image value
                     image.set(i, j * 8 + k, palette[pidx]);
                 }
 
                 // update index
                 idx++;
             }
+            // apply padding
             idx += padding;
         }
-
     };
 
 
@@ -377,6 +359,7 @@ namespace imgio {
                         pidx = 0;
                     }
 
+                    // save image value
                     image.set(i, j * 2 + k, palette[pidx]);
                 }
 
@@ -384,9 +367,9 @@ namespace imgio {
                 idx++;
             }
 
+            // apply padding
             idx += padding;
         }
-
     };
 
 
@@ -417,14 +400,15 @@ namespace imgio {
                     pidx = 0;
                 }
 
+                // save value
                 image.set(i, j, palette[pidx]);
 
                 // update index
                 idx++;
             }
+            // apply padding
             idx += padding;
         }
-
     };
 
 
@@ -444,22 +428,28 @@ namespace imgio {
             padding = 0;
         }
 
-
         // set image
         for ( int i = image.rows() - 1; i >= 0; i-- ) {
             for ( int j = 0; j < image.cols(); j++ ) {
                 color.blue = binary[idx];
                 color.green = binary[idx + 1];
                 color.red = binary[idx + 2];
+
+                // save image
                 image.set(i, j, color);
 
                 // update index
                 idx += color_size;
             }
+            // apply padding
             idx += padding;
         }
-
     };
+
+
+    //
+    // binary dumpers
+    //
 
 
     // translate image
@@ -486,7 +476,6 @@ namespace imgio {
         } else if (bitCount == 32) {
             dumpImage32bit(container);
         }
-
     };
 
 
@@ -511,12 +500,10 @@ namespace imgio {
         // set binary
         for ( int i = image.rows() - 1; i >= 0; i-- ) {
             for ( int j = 0; j < width_bytes; j++ ) {
-
                 // initialize buffer
                 buffer.clear();
 
                 for ( int k = 0; k < 8; k++ ) {
-
                     // exist pixel
                     if (j * 8 + k < image.cols()) {
                         buffer.push_back(
@@ -564,12 +551,10 @@ namespace imgio {
         // set binary
         for ( int i = image.rows() - 1; i >= 0; i-- ) {
             for ( int j = 0; j < width_bytes; j++ ) {
-
                 // initialize buffer
                 buffer.clear();
 
                 for ( int k = 0; k < 2; k++ ) {
-
                     // exist pixel
                     if (j * 2 + k < image.cols()) {
                         buffer.push_back(
@@ -581,9 +566,9 @@ namespace imgio {
                         buffer.push_back(static_cast<unsigned char>(0));
                         continue;
                     }
-
                 }
 
+                // collect data and store
                 container->push_back(collectColor4bit(buffer));
             }
 
@@ -592,7 +577,6 @@ namespace imgio {
                 container->push_back(static_cast<unsigned char>(0));
             }
         }
-
     };
 
 
@@ -609,18 +593,18 @@ namespace imgio {
             padding = 0;
         }
 
-
         // set binary
         for ( int i = image.rows() - 1; i >= 0; i-- ) {
             for ( int j = 0; j < image.cols(); j++ ) {
                 container->push_back(
                         allotPalette(image.get(i, j), palette));
             }
+
+            // padding
             for ( int k = 0; k < padding; k++ ) {
                 container->push_back(static_cast<unsigned char>(0));
             }
         }
-
     };
 
 
@@ -637,7 +621,6 @@ namespace imgio {
             padding = 0;
         }
 
-
         SimpleColor color;
 
         // dump image
@@ -649,11 +632,12 @@ namespace imgio {
                 container->push_back(color.green);
                 container->push_back(color.red);
             }
+
+            // padding
             for ( int k = 0; k < padding; k++ ) {
                 container->push_back(static_cast<unsigned char>(0));
             }
         }
-
     };
 
 
@@ -680,7 +664,6 @@ namespace imgio {
                 container->push_back(zero);
             }
         }
-
     };
 
 
@@ -714,11 +697,17 @@ namespace imgio {
             container->push_back(color.green);
             container->push_back(color.red);
 
+            // windows bitmap requires reserved space
             if (type == WINDOWS_BITMAP) {
                 container->push_back(static_cast<unsigned char>(0));
             }
         }
     };
+
+
+    //
+    // format detector
+    //
 
 
     // check if file type is BMP
@@ -727,7 +716,6 @@ namespace imgio {
 
         return binary[begin] == BmpFileHeader::type[0]
             && binary[begin + 1] == BmpFileHeader::type[1];
-
     };
 
 
@@ -752,6 +740,6 @@ namespace imgio {
         } else {
             return UNKNOWN_BITMAP;
         }
-
     };
+
 }
