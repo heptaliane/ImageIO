@@ -10,7 +10,9 @@ SET (serial "1.0.0")
 SET (soserial "1")
 
 FILE (GLOB common src/*.cpp)
+FILE (GLOB commonheader src/*.h)
 FILE (GLOB bmp src/bmp/*.cpp)
+FILE (GLOB bmpheader src/bmp/*.h)
 
 INCLUDE_DIRECTORIES (
     src/
@@ -28,6 +30,10 @@ SET_TARGET_PROPERTIES (
     SOVERSION ${soserial}
 )
 
+INSTALL (
+    FILES ${commonheader} ${bmpheader}
+    DESTINATION include
+)
 INSTALL (
     TARGETS bmploader
     LIBRARY DESTINATION lib
