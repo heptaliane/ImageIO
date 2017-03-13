@@ -25,6 +25,15 @@ namespace imgio {
     };
 
 
+    // initialized by Canvas image matrix
+    BmpDealer::BmpDealer (
+            const Canvas &imgCanvas, unsigned short bitCount) {
+
+        setBitCount(bitCount);
+        setImage(imgCanvas);
+    };
+
+
 
     // set image matrix
     void BmpDealer::setImage (const Canvas &newImage) {
