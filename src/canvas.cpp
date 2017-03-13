@@ -76,7 +76,7 @@ void Canvas::resize (unsigned int newWidth, unsigned int newHeight) {
     height = newHeight;
 
     // update matrix
-    delete mat;
+    delete[] mat;
     mat = new SimpleColor[newWidth * newHeight];
 
 }
