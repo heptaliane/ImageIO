@@ -79,6 +79,10 @@ public:
     const SimpleColor &get (unsigned int row, unsigned int col) const;
 
 
+    // get first pointer of matrix
+    const unsigned char* getPointer () const;
+
+
     // set value to matrix
     void set (unsigned int row, unsigned int col,
             const SimpleColor &color);

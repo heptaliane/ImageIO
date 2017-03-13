@@ -32,7 +32,7 @@ Canvas::Canvas (unsigned int imgWidth, unsigned int imgHeight,
 // destructor
 Canvas::~Canvas () {
 
-    delete mat;
+    delete [] mat;
     mat = NULL;
 
 }
@@ -47,6 +47,13 @@ const SimpleColor &Canvas::get (unsigned int row, unsigned int col) const {
     // if index is out of range, return exceptional value
     return except;
 
+}
+
+
+// get first pointer of matrix
+const unsigned char* Canvas::getPointer () const {
+
+    return reinterpret_cast<unsigned char*>(mat);
 }
 
 
