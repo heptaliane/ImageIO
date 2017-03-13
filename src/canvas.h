@@ -106,6 +106,11 @@ public:
     };
 
 
+    // wheather matrix is empty
+    bool isEmpty () const {
+        return (height == 0 || width == 0);
+    }
+
 
 private:
 
