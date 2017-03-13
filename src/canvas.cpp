@@ -29,6 +29,12 @@ Canvas::Canvas (unsigned int imgWidth, unsigned int imgHeight,
 }
 
 
+// copy constructor
+Canvas::Canvas (const Canvas &obj) : mat(NULL) {
+
+    copy (obj);
+}
+
 // destructor
 Canvas::~Canvas () {
 
