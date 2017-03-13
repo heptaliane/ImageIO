@@ -10,7 +10,7 @@
 
 namespace imgio {
 
-    imgio::Canvas imread(const std::string& filename) {
+    Canvas imread(const std::string& filename) {
         std::ifstream fin;
         unsigned char uc;
         std::vector<unsigned char> bin;
@@ -19,7 +19,7 @@ namespace imgio {
         if (!fin) {
             std::cout << "ImageIO > cannnot load file : " << filename
                       << std::endl;
-            return imgio::Canvas();
+            return Canvas();
         }
 
         while (!fin.eof()) {
@@ -28,7 +28,7 @@ namespace imgio {
         }
 
         fin.close();
-        imgio::Canvas img;
+        Canvas img;
 
         int dot_pos = filename.find_last_of(".");
         std::string file_ext = 
@@ -36,7 +36,7 @@ namespace imgio {
 
         // BMP loader
         if (file_ext == ".bmp" || file_ext == ".BMP") {
-          imgio::BmpDealer dealer(bin);
+          BmpDealer dealer(bin);
 
           if (!dealer.check(bin)) {
               std::cout << "ImageIO > Invalid file : " << filename
@@ -53,7 +53,7 @@ namespace imgio {
     }
 
     bool imwrite(const std::string& filename, 
-                 const imgio::Canvas& img) {
+                 const Canvas& img) {
         if (img.isEmpty()) {
             std::cout << "ImageIO > Canvas is empty" << std::endl;
             return false;
@@ -68,7 +68,7 @@ namespace imgio {
 
         // BMP Save
         if (file_ext == ".bmp" || file_ext == ".BMP") {
-            imgio::BmpDealer dealer;
+            BmpDealer dealer;
             dealer.setImage(img);
             dealer.getBinary(&bin);
         }
