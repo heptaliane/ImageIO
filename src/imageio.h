@@ -8,8 +8,8 @@
 #include <string>
 
 namespace imgio {
-    Canvas imread(std::string filename);
-    bool imwrite(std::string filename, imgio::Canvas img);
+    imgio::Canvas imread(const std::string& filename);
+    bool imwrite(const std::string& filename, const imgio::Canvas& img);
 }
 
 #endif

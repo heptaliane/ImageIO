@@ -10,7 +10,7 @@
 
 namespace imgio {
 
-    imgio::Canvas imread(std::string filename) {
+    imgio::Canvas imread(const std::string& filename) {
         std::ifstream fin;
         unsigned char uc;
         std::vector<unsigned char> bin;
@@ -52,7 +52,8 @@ namespace imgio {
         return img;
     }
 
-    bool imwrite(std::string filename, imgio::Canvas img) {
+    bool imwrite(const std::string& filename, 
+                 const imgio::Canvas& img) {
         if (img.isEmpty()) {
             std::cout << "ImageIO > Canvas is empty" << std::endl;
             return false;
