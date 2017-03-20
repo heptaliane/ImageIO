@@ -14,7 +14,7 @@ namespace imgio {
 // Bitmap File Header
 //
 //
-// common to all bmp types, and always locate at the begining of the file
+// common to all bmp types, and always locate at the beginning of the file
 //
 
 

@@ -720,7 +720,7 @@ namespace imgio {
 
 
     // check if file type is BMP
-    inline bool BmpDealer::check (
+    bool BmpDealer::check (
             const std::vector<unsigned char> &binary, int begin) {
 
         return binary[begin] == BmpFileHeader::type[0]
