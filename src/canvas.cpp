@@ -62,6 +62,11 @@ const unsigned char* Canvas::getPointer () const {
     return reinterpret_cast<unsigned char*>(mat);
 }
 
+unsigned char* Canvas::getPointer () {
+
+    return reinterpret_cast<unsigned char*>(mat);
+}
+
 
 // set value to matrix
 void Canvas::set (unsigned int row, unsigned int col,

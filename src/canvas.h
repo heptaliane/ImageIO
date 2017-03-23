@@ -81,6 +81,7 @@ public:
 
     // get first pointer of matrix
     const unsigned char* getPointer () const;
+    unsigned char* getPointer ();
 
 
     // set value to matrix
