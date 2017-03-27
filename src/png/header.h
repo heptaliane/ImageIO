@@ -50,9 +50,9 @@ public:
     PngImageHeader (const std::vector<unsigned char> &binary, int begin = 0) :
         width(conv::dumpUInt(binary, begin + 8)),
         height(conv::dumpUInt(binary, begin + 12)),
-        bitCount(conv::dumpUChar(binary, begin + 16)),
-        colorType(conv::dumpUChar(binary, begin + 17)),
-        interlace(conv::dumpUChar(binary, begin + 20)) {};
+        bitCount(binary[begin + 16]),
+        colorType(binary[begin + 17]),
+        interlace(binary[begin + 20]) {};
 
 
     // copy constructor
@@ -91,12 +91,12 @@ private:
             (colorType == 0 && (
                 bitCount == 1 || bitCount == 2 || bitCount == 4 ||
                 bitCount == 8 || bitCount == 16)) ||
-            (colorType == 2 && (bitCount == 8 || bitCount == 16) ||
+            (colorType == 2 && (bitCount == 8 || bitCount == 16)) ||
             (colorType == 3 && (
                 bitCount == 1 || bitCount == 2 ||
                 bitCount == 4 || bitCount == 8)) ||
-            (colorType == 4 && (bitCount == 8 || bitCount == 16) ||
-            (colorType == 6 && (bitCount == 8 || bitCount == 16)
+            (colorType == 4 && (bitCount == 8 || bitCount == 16)) ||
+            (colorType == 6 && (bitCount == 8 || bitCount == 16))
         );
     }
 
