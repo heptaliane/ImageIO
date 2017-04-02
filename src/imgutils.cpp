@@ -30,7 +30,7 @@ unsigned char allotPalette (
     int var;
 
     // check with all color in the palette
-    for ( int i = 0; i < palette.size(); i++ ) {
+    for ( int i = 0; i < static_cast<int>(palette.size()); i++ ) {
 
         // calculate variance
         var = square(static_cast<int>(palette[i].red)

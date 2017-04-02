@@ -304,8 +304,8 @@ namespace imgio {
             padding = 0;
         }
 
-        for ( int i = image.rows() - 1; i >= 0; i-- ) {
-            for ( int j = 0; j * 8 < image.cols(); j++ ) {
+        for ( int i = static_cast<int>(image.rows()) - 1; i >= 0; i-- ) {
+            for ( int j = 0; j * 8 < static_cast<int>(image.cols()); j++ ) {
 
                 // get palette index list
                 convertColor1bit(binary[idx], &buffer);
@@ -353,8 +353,8 @@ namespace imgio {
             padding = 0;
         }
 
-        for ( int i = image.rows() - 1; i >= 0; i-- ) {
-            for ( int j = 0; j * 2 < image.cols(); j++ ) {
+        for ( int i = static_cast<int>(image.rows()) - 1; i >= 0; i-- ) {
+            for ( int j = 0; j * 2 < static_cast<int>(image.cols()); j++ ) {
 
                 // get palette index list
                 convertColor4bit(binary[idx], &buffer);
@@ -399,8 +399,8 @@ namespace imgio {
             padding = 0;
         }
 
-        for ( int i = image.rows() - 1; i >= 0; i-- ) {
-            for ( int j = 0; j < image.cols(); j++ ) {
+        for ( int i = static_cast<int>(image.rows() - 1); i >= 0; i-- ) {
+            for ( int j = 0; j < static_cast<int>(image.cols()); j++ ) {
                 // get palette index
                 pidx = static_cast<int>(binary[idx]);
 
@@ -438,8 +438,8 @@ namespace imgio {
         }
 
         // set image
-        for ( int i = image.rows() - 1; i >= 0; i-- ) {
-            for ( int j = 0; j < image.cols(); j++ ) {
+        for ( int i = static_cast<int>(image.rows() - 1); i >= 0; i-- ) {
+            for ( int j = 0; j < static_cast<int>(image.cols()); j++ ) {
                 color.blue = binary[idx];
                 color.green = binary[idx + 1];
                 color.red = binary[idx + 2];
@@ -514,7 +514,7 @@ namespace imgio {
 
                 for ( int k = 0; k < 8; k++ ) {
                     // exist pixel
-                    if (j * 8 + k < image.cols()) {
+                    if (j * 8 + k < static_cast<int>(image.cols())) {
                         buffer.push_back(
                                 allotPalette(image.get(i, j * 8 + k),
                                     palette));
@@ -565,7 +565,7 @@ namespace imgio {
 
                 for ( int k = 0; k < 2; k++ ) {
                     // exist pixel
-                    if (j * 2 + k < image.cols()) {
+                    if (j * 2 + k < static_cast<int>(image.cols())) {
                         buffer.push_back(
                                 allotPalette(image.get(i, j * 2 + k),
                                     palette));
@@ -603,8 +603,8 @@ namespace imgio {
         }
 
         // set binary
-        for ( int i = image.rows() - 1; i >= 0; i-- ) {
-            for ( int j = 0; j < image.cols(); j++ ) {
+        for ( int i = static_cast<int>(image.rows()) - 1; i >= 0; i-- ) {
+            for ( int j = 0; j < static_cast<int>(image.cols()); j++ ) {
                 container->push_back(
                         allotPalette(image.get(i, j), palette));
             }
@@ -633,8 +633,8 @@ namespace imgio {
         SimpleColor color;
 
         // dump image
-        for ( int i = image.rows() - 1; i >= 0; i-- ) {
-            for ( int j = 0; j < image.cols(); j++ ) {
+        for ( int i = static_cast<int>(image.rows()) - 1; i >= 0; i-- ) {
+            for ( int j = 0; j < static_cast<int>(image.cols()); j++ ) {
                 color = image.get(i, j);
 
                 container->push_back(color.blue);
@@ -663,8 +663,8 @@ namespace imgio {
         unsigned char zero = static_cast<unsigned char>(0);
 
         // dump image
-        for ( int i = image.rows() - 1; i >= 0; i-- ) {
-            for ( int j = 0; j < image.cols(); j++ ) {
+        for ( int i = static_cast<int>(image.rows()) - 1; i >= 0; i-- ) {
+            for ( int j = 0; j < static_cast<int>(image.cols()); j++ ) {
                 color = image.get(i, j);
 
                 container->push_back(color.blue);
@@ -694,7 +694,7 @@ namespace imgio {
 
         // dump pelette
         for ( int i = 0; i < paletteLength; i++ ) {
-            if (i < palette.size()) {
+            if (i < static_cast<int>(palette.size())) {
                 color = palette[i];
 
             // case of index is not found in palette
