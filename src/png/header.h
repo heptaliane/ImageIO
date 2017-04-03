@@ -4,8 +4,10 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 #include "../converter.h"
+#include "../canvas.h"
 
 namespace imgio {
 
@@ -99,6 +101,52 @@ private:
             (colorType == 6 && (bitCount == 8 || bitCount == 16))
         );
     }
+
+};
+
+
+//
+// PNG Palette Header
+//
+// this is required when color type is 3
+//
+
+
+class PngPaletteHeader {
+public:
+
+
+    // constant
+    static const unsigned char headerType[4];
+
+
+    // default constructor
+    PngPaletteHeader () {};
+
+
+    // initialized by palette data
+    explicit PngPaletteHeader (const std::vector<SimpleColor> &imgpalette);
+
+
+    // initialized by raw binary
+    explicit PngPaletteHeader (
+            const std::vector<unsigned char> &binary, int begin = 0);
+
+
+    // copy constructor
+    PngPaletteHeader (const PngPaletteHeader &obj);
+
+
+    // convert to binary
+    void toBinary (std::vector<unsigned char> *container) const;
+
+
+    // convert to string
+    std::string toString() const;
+
+
+    // entity
+    std::vector<SimpleColor> palette;
 
 };
 

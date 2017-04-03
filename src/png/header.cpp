@@ -121,4 +121,109 @@ std::string PngImageHeader::toString () const {
 
 
 
+//
+// PNG Palette Header
+//
+// this is required when color type is 3
+//
+
+//
+// constant
+//
+
+const unsigned char PngPaletteHeader::headerType[4] = {
+    0x50, 0x4C, 0x54, 0x45
+};
+
+
+// initialized by palette data
+PngPaletteHeader::PngPaletteHeader (
+        const std::vector<SimpleColor> &imgpalette) {
+
+    for ( int i = 0; i < imgpalette.size(); i++ ) {
+        palette.push_back(imgpalette[i]);
+    }
+}
+
+
+// initialized by raw binary
+PngPaletteHeader::PngPaletteHeader (
+        const std::vector<unsigned char> &binary, int begin) {
+
+    unsigned int length = conv::dumpUInt(binary, begin + 4);
+
+    SimpleColor color;
+    int idx = begin + 8;
+
+    // import palette data
+    for (int i = 0; i * 3 < length; i++) {
+        color.red = binary[idx];
+        color.green = binary[idx + 1];
+        color.blue = binary[idx + 2];
+
+        palette.push_back(color);
+        idx += 3;
+    }
+}
+
+
+// copy constructor
+PngPaletteHeader::PngPaletteHeader (const PngPaletteHeader &obj) {
+
+    // prepare memory
+    palette.resize(obj.palette.size());
+
+    // copy data
+    copy(obj.palette.begin(), obj.palette.end(), palette.begin());
+}
+
+
+// convert to binary
+void PngPaletteHeader::toBinary (
+        std::vector<unsigned char> *container) const {
+
+    // prepare buffer
+    std::vector<unsigned char> buffer(4);
+
+    // delete container content
+    container->clear();
+
+    // store the header data
+    container->push_back(headerType[0]);
+
+    unsigned int length = palette.size() * 3;
+    conv::convert(length, &buffer);
+    container->insert(container->end(), buffer.begin(), buffer.end());
+
+    container->push_back(headerType[0]);
+    container->push_back(headerType[1]);
+    container->push_back(headerType[2]);
+    container->push_back(headerType[3]);
+
+    for ( int i = 0; i < palette.size(); i++ ) {
+        container->push_back(palette[i].red);
+        container->push_back(palette[i].green);
+        container->push_back(palette[i].blue);
+    }
+
+    unsigned int crc = calcCRC(
+        std::vector<unsigned char>(container->begin() + 4, container->end()));
+    container->push_back(crc);
+}
+
+
+// convert to string
+std::string PngPaletteHeader::toString () const {
+
+    std::ostringstream oss;
+
+    oss << "Palette length: " << palette.size() << '\n';
+    for ( int i = 0; i < palette.size(); i++ ) {
+        oss << "palette " << i << ": " << palette[i].red << ", "
+            << palette[i].green << ", " << palette[i].blue << '\n';
+    }
+
+    return oss.str();
+}
+
 }
