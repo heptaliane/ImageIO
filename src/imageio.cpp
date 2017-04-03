@@ -36,13 +36,13 @@ namespace imgio {
 
         // BMP loader
         if (file_ext == ".bmp" || file_ext == ".BMP") {
-          BmpDealer dealer(bin);
+            BmpDealer dealer(bin);
 
-          if (!dealer.check(bin)) {
-              std::cout << "ImageIO > Invalid file : " << filename
-                        << std::endl;
-          }
-          dealer.getImage(&img);
+            if (!dealer.check(bin)) {
+                std::cout << "ImageIO > Invalid file : " << filename
+                          << std::endl;
+            }
+            dealer.getImage(&img);
         }
         else {
             std::cout << "ImageIO > Unsuported filetype : " << file_ext
@@ -78,7 +78,7 @@ namespace imgio {
             return false;
         }
 
-        for (int k = 0; k < bin.size(); k++ ) {
+        for (size_t k = 0; k < bin.size(); k++ ) {
             fout.write(reinterpret_cast<char*>(&bin[k]), sizeof(bin[k]));
         }
         fout.close();

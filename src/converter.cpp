@@ -17,7 +17,7 @@ namespace conv {
         container->clear();
 
         // store 1 byte at a time
-        for (int i = 0; i < sizeof(origin); i++) {
+        for (int i = 0; i < static_cast<int>(sizeof(origin)); i++) {
             container->push_back(origin >> i * BIT_PER_BYTE);
         }
     }
@@ -31,7 +31,7 @@ namespace conv {
         container->clear();
 
         // store 1 byte at a time
-        for (int i = 0; i < sizeof(origin); i++) {
+        for (int i = 0; i < static_cast<int>(sizeof(origin)); i++) {
             container->push_back(origin >> i * BIT_PER_BYTE);
         }
     }
@@ -44,7 +44,7 @@ namespace conv {
         container->clear();
 
         // store 1 byte at a time
-        for (int i = 0; i < sizeof(origin); i++) {
+        for (int i = 0; i < static_cast<int>(sizeof(origin)); i++) {
             container->push_back(origin >> i * BIT_PER_BYTE);
         }
     }
@@ -57,7 +57,7 @@ namespace conv {
         container->clear();
 
         // store 1 byte at a time
-        for (int i = 0; i < sizeof(origin); i++) {
+        for (int i = 0; i < static_cast<int>(sizeof(origin)); i++) {
             container->push_back(origin >> i * BIT_PER_BYTE);
         }
     }

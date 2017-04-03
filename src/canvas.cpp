@@ -20,8 +20,8 @@ Canvas::Canvas (unsigned int imgWidth, unsigned int imgHeight,
     int i, j;
 
     // set initial value to matrix
-    for ( i = 0; i < imgWidth; i++ ) {
-        for ( j = 0; j < imgHeight; j++ ) {
+    for ( i = 0; i < static_cast<int>(imgWidth); i++ ) {
+        for ( j = 0; j < static_cast<int>(imgHeight); j++ ) {
             mat[i * imgHeight + j] = color;
         }
     }
@@ -100,8 +100,8 @@ void Canvas::copy (const Canvas &obj) {
     int i, j;
 
     // copy matrix
-    for ( i = 0; i < height; i++ ) {
-        for ( j = 0; j < width; j++ ) {
+    for ( i = 0; i < static_cast<int>(height); i++ ) {
+        for ( j = 0; j < static_cast<int>(width); j++ ) {
             set(i, j, obj.get(i, j));
         }
     }
